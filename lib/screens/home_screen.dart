@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const twentyFiveMinutes = 1500;
+  static const greenBackground = Color.fromARGB(255, 85, 199, 109);
   int totalSeconds = twentyFiveMinutes;
   bool isRunning = false;
   int totalPomodoros = 0;
@@ -63,7 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isRunning
+          ? Theme.of(context).scaffoldBackgroundColor
+          : greenBackground,
       body: Column(
         children: [
           Flexible(
@@ -96,8 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     iconSize: 120,
-                    color: Theme.of(context).cardColor,
-                    onPressed: isRunning ? onRestartPressed : null,
+                    color: totalSeconds != twentyFiveMinutes
+                        ? Theme.of(context).cardColor
+                        : Colors.grey[400],
+                    onPressed: onRestartPressed,
                     icon: const Icon(Icons.replay_rounded),
                   ),
                 ],
