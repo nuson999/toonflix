@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toonflix/models/webtoon_model.dart';
 import 'package:toonflix/services/api_service.dart';
+import 'package:toonflix/widgets/webtoon_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -12,7 +13,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 2,
+        elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.white,
         title: const Text(
@@ -27,14 +28,15 @@ class HomeScreen extends StatelessWidget {
         future: webtoons,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                var webtoon = snapshot.data![index];
-                return Text(webtoon.title);
-              },
-              separatorBuilder: (context, index) => const SizedBox(width: 20),
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 30,
+                ),
+                Expanded(
+                  child: makeList(snapshot),
+                ),
+              ],
             );
           }
           return const Center(
@@ -42,6 +44,23 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      itemBuilder: (context, index) {
+        var webtoon = snapshot.data![index];
+        return Webtoon(
+          title: webtoon.title,
+          thumb: webtoon.thumb,
+          id: webtoon.id,
+        );
+      },
+      separatorBuilder: (context, index) => const SizedBox(width: 40),
     );
   }
 }
