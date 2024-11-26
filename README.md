@@ -1,6 +1,6 @@
 # toonflix
 
-A new Flutter project.
+https://nomadcoders.co/flutter-for-beginners 
 
 ## Getting Started
 
