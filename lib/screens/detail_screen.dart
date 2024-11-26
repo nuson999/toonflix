@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toonflix/models/webtoon_detail.dart';
 import 'package:toonflix/models/webtoon_episode_model.dart';
 import 'package:toonflix/services/api_service.dart';
@@ -21,14 +22,48 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  static const String likedToonsString = 'likedToons';
   late Future<WebtoonDetailModel> webtoon;
   late Future<List<WebtoonEpisodeModel>> episodes;
+  late SharedPreferences prefs;
+  bool isLiked = false;
+
+  Future initPreps() async {
+    prefs = await SharedPreferences.getInstance();
+    final likedToons = prefs.getStringList(likedToonsString);
+    print(likedToons);
+    if (likedToons != null) {
+      if (likedToons.contains(widget.id) == true) {
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } else {
+      prefs.setStringList(likedToonsString, []);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     webtoon = ApiService.getToonById(widget.id);
     episodes = ApiService.getLatestEpisodesById(widget.id);
+    initPreps();
+  }
+
+  onHeartTap() async {
+    final likedToons = prefs.getStringList(likedToonsString);
+    if (likedToons != null) {
+      if (isLiked) {
+        likedToons.remove(widget.id);
+      } else {
+        likedToons.add(widget.id);
+      }
+      await prefs.setStringList(likedToonsString, likedToons);
+    }
+    setState(() {
+      isLiked = !isLiked;
+    });
   }
 
   @override
@@ -36,6 +71,14 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: onHeartTap,
+            icon: Icon(isLiked
+                ? Icons.favorite_rounded
+                : Icons.favorite_outline_rounded),
+          )
+        ],
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.white,
