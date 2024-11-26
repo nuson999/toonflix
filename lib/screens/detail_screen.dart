@@ -4,8 +4,6 @@ import 'package:toonflix/models/webtoon_detail.dart';
 import 'package:toonflix/models/webtoon_episode_model.dart';
 import 'package:toonflix/services/api_service.dart';
 import 'package:toonflix/widgets/episode_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title, thumb, id;
@@ -31,7 +29,6 @@ class _DetailScreenState extends State<DetailScreen> {
   Future initPreps() async {
     prefs = await SharedPreferences.getInstance();
     final likedToons = prefs.getStringList(likedToonsString);
-    print(likedToons);
     if (likedToons != null) {
       if (likedToons.contains(widget.id) == true) {
         setState(() {
